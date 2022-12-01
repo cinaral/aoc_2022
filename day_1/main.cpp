@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -10,11 +12,11 @@ int
 main(int argc, char *argv[])
 {
 	//* open the file
-	printf("Usage: main [input (Default: \"%s\")] [n]\n", default_file);
+	// printf("Usage: main [input (Default: \"%s\")] [n]\n", default_file);
 	FILE *const input_file = fopen(argc > 1 ? argv[1] : default_file, "r");
 
 	if (input_file != NULL) {
-		printf("Opened %s\n", argc > 1 ? argv[1] : default_file);
+		// printf("Opened %s\n", argc > 1 ? argv[1] : default_file);
 	} else {
 		perror("Error opening file");
 	}
@@ -49,32 +51,79 @@ main(int argc, char *argv[])
 			elf_load[i] += list[j];
 		}
 	}
-	printf("%d values, %d elves\n", list_size, elf_count);
+	printf("---------------------------\n");
+	printf("%d values, %d elves, top %d\n", list_size, elf_count, sizeof_toplist);
+	printf("---------------------------\n");
 
-	//* process
+	/*
+	 * std::sort --- The correct way? (depends)
+	 *
+	 * std::sort is faster than the first solution attempt for large n ~= elf count,
+	 * which is probably known sorting algorithm in disguise. See README.md
+	 */
+	{
+		const auto start = std::chrono::high_resolution_clock::now();
 
-	size_t *const toplist = new size_t[sizeof_toplist];
-	toplist[0] = 0;
+		std::sort(elf_load, elf_load + elf_count, std::greater<size_t>()); //* <---
+		const auto end_1 = std::chrono::high_resolution_clock::now();
 
-	for (size_t i = 0; i < elf_count; ++i) {
-		for (size_t j = 0; j < sizeof_toplist; ++j) {
-			if (elf_load[i] > toplist[j]) {
-				for (size_t k = sizeof_toplist - 1; k > j; --k) {
-					toplist[k] = toplist[k - 1];
+		size_t toplist_sum = 0;
+
+		for (size_t i = 0; i < sizeof_toplist; ++i) {
+			toplist_sum += elf_load[i];
+			// printf("%d ", elf_load[i]);
+		}
+		printf("Sum: %d\n", toplist_sum);
+		const auto end_2 = std::chrono::high_resolution_clock::now();
+		const auto diff_1 =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
+		const auto diff_2 =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
+		printf("std::sort took %d microseconds (%d total w/ printing)\n", diff_1.count(),
+		       diff_1.count() + diff_2.count());
+	}
+	/*
+	 * the first solution attempt --- What I did at first
+	 *
+	 * The first solution attempt is faster than std::sort for small n << elf count,
+	 * because we don't have to sort the whole array. See README.md
+	 */
+	{
+		const auto start = std::chrono::high_resolution_clock::now();
+		size_t *const toplist = new size_t[sizeof_toplist];
+		toplist[0] = 0;
+
+		for (size_t i = 0; i < elf_count; ++i) { //* <---
+			for (size_t j = 0; j < sizeof_toplist; ++j) {
+				if (elf_load[i] > toplist[j]) {
+					for (size_t k = sizeof_toplist - 1; k > j; --k) {
+						toplist[k] = toplist[k - 1];
+					}
+					toplist[j] = elf_load[i];
+					break;
 				}
-				toplist[j] = elf_load[i];
-				break;
 			}
 		}
-	}
-	printf("Top %d: ", sizeof_toplist);
-	size_t toplist_sum = 0;
+		const auto end_1 = std::chrono::high_resolution_clock::now();
 
-	for (size_t i = 0; i < sizeof_toplist; ++i) {
-		toplist_sum += toplist[i];
-		printf("%d ", toplist[i]);
+		size_t toplist_sum = 0;
+
+		for (size_t i = 0; i < sizeof_toplist; ++i) {
+			toplist_sum += toplist[i];
+			// printf("%d ", toplist[i]);
+		}
+		printf("Sum: %d\n", toplist_sum);
+		const auto end_2 = std::chrono::high_resolution_clock::now();
+		const auto diff_1 =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
+		const auto diff_2 =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
+		printf("the first attempt took %d microseconds (%d total w/ printing)\n",
+		       diff_1.count(), diff_1.count() + diff_2.count());
 	}
-	printf("\nSum: %d\n", toplist_sum);
+	/*
+	 * End of the first solution attempt
+	 */
 
 	//* close the file
 	if (fclose(input_file) != 0) {
