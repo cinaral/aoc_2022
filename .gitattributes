@@ -1,2 +1,2 @@
 * text=auto
-*.sh linguist-detectable=false
+scripts/ linguist-detectable=false
