@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-constexpr char default_file[] = "input.txt";
+constexpr char default_file[] = "day1/input.txt";
 constexpr size_t default_sizeof_toplist = 3;
 constexpr size_t sizeof_line = 32;
 
@@ -12,15 +12,15 @@ int
 main(int argc, char *argv[])
 {
 	//* open the file
-	// printf("Usage: main [input (Default: \"%s\")] [n]\n", default_file);
-	FILE *const input_file = fopen(argc > 1 ? argv[1] : default_file, "r");
+	printf("Usage: main [n] [input (Default: \"%s\")]\n", default_file);
+	size_t sizeof_toplist = argc > 1 ? atoi(argv[1]) : default_sizeof_toplist;
+	FILE *const input_file = fopen(argc > 2 ? argv[2] : default_file, "r");
 
 	if (input_file != NULL) {
-		// printf("Opened %s\n", argc > 1 ? argv[1] : default_file);
+		printf("Opened %s\n", argc > 2 ? argv[2] : default_file);
 	} else {
 		perror("Error opening file");
 	}
-	size_t sizeof_toplist = argc > 2 ? atoi(argv[2]) : default_sizeof_toplist;
 
 	//* read the file
 	size_t i = 0;
@@ -51,9 +51,9 @@ main(int argc, char *argv[])
 			elf_load[i] += list[j];
 		}
 	}
-	printf("---------------------------\n");
-	printf("%d values, %d elves, top %d\n", list_size, elf_count, sizeof_toplist);
-	printf("---------------------------\n");
+	printf("---------------------------------\n");
+	printf("%llu values, %llu elves, top %llu\n", list_size, elf_count, sizeof_toplist);
+	printf("---------------------------------\n");
 
 	/*
 	 * std::sort --- The correct way? (depends)
@@ -73,14 +73,14 @@ main(int argc, char *argv[])
 			toplist_sum += elf_load[i];
 			// printf("%d ", elf_load[i]);
 		}
-		printf("Sum: %d\n", toplist_sum);
+		printf("Sum: %llu\n", toplist_sum);
 		const auto end_2 = std::chrono::high_resolution_clock::now();
 		const auto diff_1 =
 		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
 		const auto diff_2 =
 		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
-		printf("std::sort took %d microseconds (%d total w/ printing)\n", diff_1.count(),
-		       diff_1.count() + diff_2.count());
+		printf("std::sort took %llu microseconds (%llu total w/ printing)\n",
+		       diff_1.count(), diff_1.count() + diff_2.count());
 	}
 	/*
 	 * the first solution attempt --- What I did at first
@@ -112,13 +112,13 @@ main(int argc, char *argv[])
 			toplist_sum += toplist[i];
 			// printf("%d ", toplist[i]);
 		}
-		printf("Sum: %d\n", toplist_sum);
+		printf("Sum: %llu\n", toplist_sum);
 		const auto end_2 = std::chrono::high_resolution_clock::now();
 		const auto diff_1 =
 		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
 		const auto diff_2 =
 		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
-		printf("the first attempt took %d microseconds (%d total w/ printing)\n",
+		printf("the first attempt took %llu microseconds (%llu total w/ printing)\n",
 		       diff_1.count(), diff_1.count() + diff_2.count());
 	}
 	/*
