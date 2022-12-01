@@ -14,12 +14,12 @@
 		},
 		{
 			"label": "Clear and configure",
-			"type": "shell",	
+			"type": "shell",
 			"command": "./scripts/build/configure.sh",
 			"group": "build",
 			"dependsOn": [
-                "Clear"
-            ],
+				"Clear"
+			],
 		},
 		{
 			"label": "Build",
@@ -39,9 +39,24 @@
 			"command": "./scripts/build/test.sh",
 			"group": "build",
 			"dependsOn": [
-                "Build"
-            ],
+				"Build"
+			],
 		},
+		{
+			"label": "Run",
+			"type": "shell",
+			"command": "./scripts/run.sh",
+			"group": "build",
+		},
+		{
+			"label": "Build and run",
+			"type": "shell",
+			"command": "./scripts/run.sh",
+			"group": "build",
+			"dependsOn": [
+				"Build"
+			],
+		}
 	],
 	"version": "2.0.0",
 	"type": "shell",

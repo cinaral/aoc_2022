@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #* project relative path
-PROJECT_PATH=../..
-CLEAR_DIR=$PROJECT_PATH/build
+PROJECT_PATH=..
+BUILD_DIR=build/bin
 
 #*  change the cwd to the script dir temporarily, and hide pushd popd output
 pushd () { 
@@ -14,13 +14,9 @@ popd () {
 pushd "$(dirname ${BASH_SOURCE:0})"
 trap popd EXIT #*
 
-#* remove dir
-if [[ -d "$CLEAR_DIR" ]]; then
-rm -r -f $CLEAR_DIR
+pushd $PROJECT_PATH
+trap popd EXIT #*
 
-if [[ $? -eq 0 ]]; then
-   echo "Removed $CLEAR_DIR"
-fi
-fi
+$BUILD_DIR/day1.exe
 
 echo "$0 done."
