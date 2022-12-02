@@ -16,7 +16,8 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
 	#* directory to executables to be built
 	set(DAY_FOLDERS
-		day1
+		#day1
+		day2
 	)
 
 	#* set up output directories
