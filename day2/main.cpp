@@ -12,12 +12,11 @@ int
 main(int argc, char *argv[])
 {
 	//* open the file
-	printf("Usage: main [n] [input (Default: \"%s\")]\n", default_file);
-	size_t sizeof_toplist = argc > 1 ? atoi(argv[1]) : default_sizeof_toplist;
-	FILE *const input_file = fopen(argc > 2 ? argv[2] : default_file, "r");
+	printf("Usage: main [input (Default: \"%s\")]\n", default_file);
+	FILE *const input_file = fopen(argc > 1 ? argv[1] : default_file, "r");
 
 	if (input_file != NULL) {
-		printf("Opened %s\n", argc > 2 ? argv[2] : default_file);
+		printf("Opened %s\n", argc > 1 ? argv[1] : default_file);
 	} else {
 		perror("Error opening file");
 	}
@@ -39,53 +38,124 @@ main(int argc, char *argv[])
 		}
 	}
 	const size_t move_count = i;
-	int total_score = 0;
 
-	for (size_t i = 0; i < move_count; ++i) {
-		printf("%c%c ", theirs[i], ours[i]);
-		switch (ours[i]) {
-		case 'X':
-			total_score += 6;
-			break;
-		case 'Y':
-			total_score += 3;
-			break;
-		case 'Z':
-			total_score += 0;
-			break;
-		default:
-			break;
-		}
-		switch (theirs[i]) {
-		case 'A':
-			if (ours[i] == 'Y') {
-				total_score += 6;
-			} else if (ours[i] == 'X') {
-				total_score += 3;
-			}
-			break;
-		case 'B':
-			if (ours[i] == 'Z') {
-				total_score += 6;
-			} else if (ours[i] == 'Y') {
-				total_score += 3;
-			}
+	{
+		int total_score = 0;
 
-			break;
-		case 'C':
-			if (ours[i] == 'X') {
+		for (size_t i = 0; i < move_count; ++i) {
+			switch (ours[i]) {
+			case 'X':
 				total_score += 6;
-			} else if (ours[i] == 'Z') {
+				break;
+			case 'Y':
 				total_score += 3;
+				break;
+			case 'Z':
+				total_score += 0;
+				break;
+			default:
+				break;
 			}
-			break;
-		default:
-			break;
+			switch (theirs[i]) {
+			case 'A':
+				if (ours[i] == 'Y') {
+					total_score += 6;
+				} else if (ours[i] == 'X') {
+					total_score += 3;
+				}
+				break;
+			case 'B':
+				if (ours[i] == 'Z') {
+					total_score += 6;
+				} else if (ours[i] == 'Y') {
+					total_score += 3;
+				}
+
+				break;
+			case 'C':
+				if (ours[i] == 'X') {
+					total_score += 6;
+				} else if (ours[i] == 'Z') {
+					total_score += 3;
+				}
+				break;
+			default:
+				break;
+			}
 		}
+		printf("score a %d\n", total_score);
 	}
-	printf("score %d", total_score);
-	//* process
+	{
+		int total_score = 0;
 
+		for (size_t i = 0; i < move_count; ++i) {
+
+			switch (ours[i]) {
+			case 'Z':
+				total_score += 6;
+				break;
+			case 'Y':
+				total_score += 3;
+				break;
+			case 'X':
+				total_score += 0;
+				break;
+			default:
+				break;
+			}
+			switch (theirs[i]) {
+			case 'A':
+				switch (ours[i]) {
+				case 'Z':
+					total_score += 2;
+					break;
+				case 'Y':
+					total_score += 1;
+					break;
+				case 'X':
+					total_score += 3;
+					break;
+				default:
+					break;
+				}
+				break;
+			case 'B':
+				switch (ours[i]) {
+				case 'Z':
+					total_score += 3;
+					break;
+				case 'Y':
+					total_score += 2;
+					break;
+				case 'X':
+					total_score += 1;
+					break;
+				default:
+					break;
+				}
+				break;
+			case 'C':
+				switch (ours[i]) {
+				case 'Z':
+					total_score += 1;
+					break;
+				case 'Y':
+					total_score += 3;
+					break;
+				case 'X':
+					total_score += 2;
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		printf("score b %d\n`", total_score);
+		//* process
+	}
 	//* close the file
 	if (fclose(input_file) != 0) {
 		perror("Error closing file");
