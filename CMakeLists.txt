@@ -12,11 +12,11 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	#* where to look for the project header and source files
 	set(INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR})
 	set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR})
- 	set(SRC_FILE main.cpp)
 
 	#* directory to executables to be built
-	set(DAY_FOLDERS
-		#day1
+	set(EXECUTABLES
+		template
+		day1
 		day2
 	)
 
@@ -42,10 +42,10 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	#***************#
 	#* Executables *#
 	#***************#
-	foreach(ELEMENT ${DAY_FOLDERS})
+	foreach(ELEMENT ${EXECUTABLES})
 		add_executable(
 			${ELEMENT}
-			${SRC_DIR}/${ELEMENT}/${SRC_FILE}		
+			${SRC_DIR}/${ELEMENT}/${ELEMENT}.cpp		
 		)
 		target_include_directories(
 			${ELEMENT} PRIVATE 
@@ -54,6 +54,6 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 		target_compile_options(
 			${ELEMENT} PRIVATE
 		)
-	endforeach(ELEMENT ${DAY_FOLDERS})
+	endforeach(ELEMENT ${EXECUTABLES})
 endif()
 

@@ -5,7 +5,6 @@
 #include <vector>
 
 constexpr char default_file[] = "day2/input.txt";
-constexpr size_t default_sizeof_toplist = 3;
 constexpr size_t sizeof_line = 32;
 
 int

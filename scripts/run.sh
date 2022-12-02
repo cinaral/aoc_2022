@@ -17,7 +17,8 @@ trap popd EXIT #*
 pushd $PROJECT_PATH
 trap popd EXIT #*
 
+$BUILD_DIR/template.exe
 #$BUILD_DIR/day1.exe
-$BUILD_DIR/day2.exe
+#$BUILD_DIR/day2.exe
 
 echo "$0 done."
