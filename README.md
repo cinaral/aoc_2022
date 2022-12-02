@@ -4,3 +4,6 @@
 You can't beat $n\log(n)$, or [can you](day1/README.md)? [(source) Lines: 58-128](day1/main.cpp)
 
 ## Day 2
+Many switches
+
+## Day 3
