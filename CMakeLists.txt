@@ -15,10 +15,10 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
 	#* directory to executables to be built
 	set(EXECUTABLES
-		#template
+		template
 		#day1
 		#day2
-		day3
+		#day3
 	)
 
 	#* set up output directories
