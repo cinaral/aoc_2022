@@ -2,9 +2,8 @@
 #include <cstdlib>
 #include <vector>
 
-constexpr char default_file[] = "template/input.txt";
+constexpr char default_file[] = "day4/input.txt";
 constexpr size_t line_buf_size = 64;
-using Val_T = int;
 
 int
 main(int argc, char *argv[])
@@ -49,17 +48,17 @@ main(int argc, char *argv[])
 	printf("Read %zu lines in %zu groups\n", line_count, grup_count);
 
 	//* parse the lines and groups
-	std::vector<std::vector<Val_T>> vals_in_grups;
+	size_t a_counter = 0;
+	size_t b_counter = 0;
 
 	for (size_t i = 0; i < grup_end_idx.size(); ++i) {
 		//* iterate over groups...
-		printf("Group %zu: ", i);
+		// printf("Group %zu: ", i);
 		const size_t grp_start_idx = i == 0 ? 0 : grup_end_idx[i - 1];
-		std::vector<Val_T> vals;
 
 		for (size_t j = grp_start_idx; j < grup_end_idx[i]; ++j) {
 			//* iterate over lines in group...
-			printf("[%zu]", j);
+			// printf("[%zu]", j);
 			const size_t line_len = line_len_arr[j];
 			char str[line_buf_size];
 
@@ -69,18 +68,24 @@ main(int argc, char *argv[])
 				str[k] = line_arr[j][k];
 			}
 			str[line_len] = '\0'; //* null termination
-			printf("%s", str);
+			// printf("%s", str);
 
-			//* parse into values if needed
-			const Val_T val = atoi(str);
-			vals.push_back(val);
-			printf("(%d)", val);
-			printf(" ");
+			static size_t r1, r2, r3, r4;
+			sscanf(str, "%zu-%zu,%zu-%zu", &r1, &r2, &r3, &r4);
+
+			if ((r1 <= r3 && r2 >= r4) || (r1 >= r3 && r2 <= r4)) {
+				++a_counter;
+				// printf("%zu-%zu,%zu-%zu\n", r1, r2, r3, r4);
+			}
+
+			if (r2 >= r3 && r1 <= r4) {
+				++b_counter;
+				// printf("%zu-%zu,%zu-%zu\n", r1, r2, r3, r4);
+			}
 		}
-		vals_in_grups.push_back(vals);
 		printf("\n");
 	}
-	printf("\n");
+	printf("a %zu, b %zu\n", a_counter, b_counter);
 
 	//* close the file
 	if (fclose(input_file) != 0) {

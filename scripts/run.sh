@@ -17,10 +17,19 @@ trap popd EXIT #*
 pushd $PROJECT_PATH
 trap popd EXIT #*
 
+printf "\nRun template.exe...\n"
 $BUILD_DIR/template.exe
-#$BUILD_DIR/day1.exe
-#$BUILD_DIR/day2.exe
-#$BUILD_DIR/day3.exe
-#$BUILD_DIR/day4.exe
+
+printf "\nRun day1.exe...\n"
+$BUILD_DIR/day1.exe
+
+printf "\nRun day2.exe...\n"
+$BUILD_DIR/day2.exe
+
+printf "\nRun day3.exe...\n"
+$BUILD_DIR/day3.exe
+
+printf "\nRun day4.exe...\n"
+$BUILD_DIR/day4.exe
 
 echo "$0 done."
