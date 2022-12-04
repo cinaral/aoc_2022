@@ -24,7 +24,7 @@ main(int argc, char *argv[])
 	size_t line_counter = 0;
 	std::vector<std::vector<char>> line_arr;
 	std::vector<size_t> line_len_arr;
-	std::vector<size_t> grup_end_idx;
+	std::vector<size_t> grp_end_idx;
 
 	while (fgets(line_buf, line_buf_size, input_file) != NULL) {
 		std::vector<char> lines;
@@ -36,49 +36,45 @@ main(int argc, char *argv[])
 					line_arr.push_back(lines);
 					line_len_arr.push_back(j);
 				} else {
-					grup_end_idx.push_back(line_counter);
+					grp_end_idx.push_back(line_counter);
 				}
 				break;
 			}
 			lines.push_back(line_buf[j]);
 		}
 	}
-	grup_end_idx.push_back(line_counter);
-	const size_t grup_count = grup_end_idx.size();
+	grp_end_idx.push_back(line_counter);
+	const size_t grup_count = grp_end_idx.size();
 	const size_t line_count = line_counter;
 	printf("Read %zu lines in %zu groups\n", line_count, grup_count);
 
 	//* parse the lines and groups
-	std::vector<std::vector<Val_T>> vals_in_grups;
+	std::vector<std::vector<Val_T>> vals_in_grps;
 
-	for (size_t i = 0; i < grup_end_idx.size(); ++i) {
+	for (size_t i = 0; i < grp_end_idx.size(); ++i) {
 		//* iterate over groups...
-		printf("Group %zu: ", i);
-		const size_t grp_start_idx = i == 0 ? 0 : grup_end_idx[i - 1];
+		const size_t grp_start_idx = i == 0 ? 0 : grp_end_idx[i - 1];
 		std::vector<Val_T> vals;
+		// printf("Group %zu: ", i);
 
-		for (size_t j = grp_start_idx; j < grup_end_idx[i]; ++j) {
+		for (size_t j = grp_start_idx; j < grp_end_idx[i]; ++j) {
 			//* iterate over lines in group...
-			printf("[%zu]", j);
 			const size_t line_len = line_len_arr[j];
 			char str[line_buf_size];
+			// printf("[%zu]", j);
 
 			for (size_t k = 0; k < line_len; ++k) {
 				//* iterate over characters in line...
-				// printf("%c", line_arr[j][k]);
 				str[k] = line_arr[j][k];
+				// printf("%c", line_arr[j][k]);
 			}
-			str[line_len] = '\0'; //* null termination
-			printf("%s", str);
-
-			//* parse into values if needed
-			const Val_T val = atoi(str);
+			str[line_len] = '\0';        //* null termination
+			const Val_T val = atoi(str); //* parse into values if needed
 			vals.push_back(val);
-			printf("(%d)", val);
-			printf(" ");
+			// printf("%s(%d) ", str, val);
 		}
-		vals_in_grups.push_back(vals);
-		printf("\n");
+		vals_in_grps.push_back(vals);
+		// printf("\n");
 	}
 	printf("\n");
 

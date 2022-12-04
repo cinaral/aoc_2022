@@ -4,56 +4,100 @@
 #include <cstdlib>
 #include <vector>
 
-constexpr char default_file[] = "day1/input.txt";
-constexpr size_t default_sizeof_toplist = 3;
-constexpr size_t sizeof_line = 32;
+constexpr char dflt_file[] = "day1/input.txt";
+constexpr size_t dflt_toplist_size = 3;
+constexpr size_t line_buf_size = 64;
+using Val_T = unsigned;
 
 int
 main(int argc, char *argv[])
 {
 	//* open the file
-	printf("Usage: main [n] [input (Default: \"%s\")]\n", default_file);
-	size_t sizeof_toplist = argc > 1 ? atoi(argv[1]) : default_sizeof_toplist;
-	FILE *const input_file = fopen(argc > 2 ? argv[2] : default_file, "r");
+	printf("Usage: main [n] [input (Default: \"%s\")]\n", dflt_file);
+	size_t toplist_size = argc > 1 ? atoi(argv[1]) : dflt_toplist_size;
+	FILE *const input_file = fopen(argc > 2 ? argv[2] : dflt_file, "r");
 
 	if (input_file != NULL) {
-		printf("Opened %s\n", argc > 2 ? argv[2] : default_file);
+		printf("Opened %s\n", argc > 2 ? argv[2] : dflt_file);
 	} else {
 		perror("Error opening file");
 	}
 
 	//* read the file
-	size_t i = 0;
-	std::vector<int> list;
-	std::vector<size_t> elf_idx;
-	char line[sizeof_line];
+	char line_buf[line_buf_size];
+	size_t line_counter = 0;
+	std::vector<std::vector<char>> line_arr;
+	std::vector<size_t> line_len_arr;
+	std::vector<size_t> grp_end_idx;
 
-	while (fgets(line, sizeof_line, input_file) != NULL) {
-		if (line[0] != '\n') {
-			++i;
-			static int d;
-			sscanf(line, "%d", &d);
-			list.push_back(d);
-		} else {
-			elf_idx.push_back(i);
+	while (fgets(line_buf, line_buf_size, input_file) != NULL) {
+		std::vector<char> lines;
+
+		for (size_t j = 0; j < line_buf_size; ++j) {
+			if (line_buf[j] == '\n' || line_buf[j] == '\0') {
+				if (j > 0) { //* if line_buf is not just endline/empty
+					++line_counter;
+					line_arr.push_back(lines);
+					line_len_arr.push_back(j);
+				} else {
+					grp_end_idx.push_back(line_counter);
+				}
+				break;
+			}
+			lines.push_back(line_buf[j]);
 		}
 	}
-	elf_idx.push_back(i);
-	const size_t list_size = i;
-	const size_t elf_count = elf_idx.size() - 1; //* -1 because of the last
-	size_t *const elf_load = new size_t[elf_count];
-	sizeof_toplist = sizeof_toplist > elf_count ? elf_count : sizeof_toplist;
+	grp_end_idx.push_back(line_counter);
+	const size_t grup_count = grp_end_idx.size();
+	const size_t line_count = line_counter;
+	printf("Read %zu lines in %zu groups\n", line_count, grup_count);
+
+	//* parse the lines and groups
+	std::vector<std::vector<Val_T>> vals_in_grps;
+
+	for (size_t i = 0; i < grp_end_idx.size(); ++i) {
+		//* iterate over groups...
+		const size_t grp_start_idx = i == 0 ? 0 : grp_end_idx[i - 1];
+		std::vector<Val_T> vals;
+		// printf("Group %zu: ", i);
+
+		for (size_t j = grp_start_idx; j < grp_end_idx[i]; ++j) {
+			//* iterate over lines in group...
+			const size_t line_len = line_len_arr[j];
+			char str[line_buf_size];
+			// printf("[%zu]", j);
+
+			for (size_t k = 0; k < line_len; ++k) {
+				//* iterate over characters in line...
+				str[k] = line_arr[j][k];
+				// printf("%c", line_arr[j][k]);
+			}
+			str[line_len] = '\0';        //* null termination
+			const Val_T val = atoi(str); //* parse into value if needed
+			vals.push_back(val);
+			// printf("%s(%d)", str, val);
+		}
+		vals_in_grps.push_back(vals);
+		// printf("\n");
+	}
+	printf("\n");
+
+	const size_t elf_count = vals_in_grps.size();
+
+	//* find the top n elves
+	Val_T *const elf_cal = new Val_T[elf_count];
+	toplist_size = toplist_size > elf_count ? elf_count : toplist_size;
 
 	for (size_t i = 0; i < elf_count; ++i) {
-		elf_load[i] = 0;
+		elf_cal[i] = 0;
 
-		for (size_t j = elf_idx[i]; j < elf_idx[i + 1]; ++j) {
-			elf_load[i] += list[j];
+		for (auto j : vals_in_grps[i]) {
+			elf_cal[i] += j;
 		}
 	}
-	printf("---------------------------------\n");
-	printf("%llu values, %llu elves, top %llu\n", list_size, elf_count, sizeof_toplist);
-	printf("---------------------------------\n");
+	printf("---------------------------\n");
+	printf("%zu elves, calories top %zu\n", elf_count, toplist_size);
+	printf("----------------------------\n");
 
 	/*
 	 * std::sort --- The correct way? (depends)
@@ -63,24 +107,18 @@ main(int argc, char *argv[])
 	 */
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
+		std::sort(elf_cal, elf_cal + elf_count, std::greater<Val_T>()); //* <---
+		Val_T toplist_sum = 0;
 
-		std::sort(elf_load, elf_load + elf_count, std::greater<size_t>()); //* <---
-		const auto end_1 = std::chrono::high_resolution_clock::now();
-
-		size_t toplist_sum = 0;
-
-		for (size_t i = 0; i < sizeof_toplist; ++i) {
-			toplist_sum += elf_load[i];
-			// printf("%d ", elf_load[i]);
+		for (size_t i = 0; i < toplist_size; ++i) {
+			toplist_sum += elf_cal[i];
+			// printf("(%zu)%u ", i + 1, elf_loads[i]);
 		}
-		printf("Sum: %llu\n", toplist_sum);
-		const auto end_2 = std::chrono::high_resolution_clock::now();
-		const auto diff_1 =
-		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
-		const auto diff_2 =
-		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
-		printf("std::sort took %llu microseconds (%llu total w/ printing)\n",
-		       diff_1.count(), diff_1.count() + diff_2.count());
+		const auto end = std::chrono::high_resolution_clock::now();
+		const auto diff =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+		printf("sum: %u, using std::sort took %llu microseconds\n", toplist_sum,
+		       diff.count());
 	}
 	/*
 	 * the first solution attempt --- What I did at first
@@ -90,36 +128,31 @@ main(int argc, char *argv[])
 	 */
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
-		size_t *const toplist = new size_t[sizeof_toplist];
+		Val_T *const toplist = new Val_T[toplist_size];
 		toplist[0] = 0;
 
 		for (size_t i = 0; i < elf_count; ++i) { //* <---
-			for (size_t j = 0; j < sizeof_toplist; ++j) {
-				if (elf_load[i] > toplist[j]) {
-					for (size_t k = sizeof_toplist - 1; k > j; --k) {
+			for (size_t j = 0; j < toplist_size; ++j) {
+				if (elf_cal[i] > toplist[j]) {
+					for (size_t k = toplist_size - 1; k > j; --k) {
 						toplist[k] = toplist[k - 1];
 					}
-					toplist[j] = elf_load[i];
+					toplist[j] = elf_cal[i];
 					break;
 				}
 			}
 		}
-		const auto end_1 = std::chrono::high_resolution_clock::now();
+		Val_T toplist_sum = 0;
 
-		size_t toplist_sum = 0;
-
-		for (size_t i = 0; i < sizeof_toplist; ++i) {
-			toplist_sum += toplist[i];
-			// printf("%d ", toplist[i]);
+		for (size_t i = 0; i < toplist_size; ++i) {
+			toplist_sum += elf_cal[i];
+			// printf("(%zu)%u ", i + 1, elf_loads[i]);
 		}
-		printf("Sum: %llu\n", toplist_sum);
-		const auto end_2 = std::chrono::high_resolution_clock::now();
-		const auto diff_1 =
-		    std::chrono::duration_cast<std::chrono::microseconds>(end_1 - start);
-		const auto diff_2 =
-		    std::chrono::duration_cast<std::chrono::microseconds>(end_2 - end_1);
-		printf("the first attempt took %llu microseconds (%llu total w/ printing)\n",
-		       diff_1.count(), diff_1.count() + diff_2.count());
+		const auto end = std::chrono::high_resolution_clock::now();
+		const auto diff =
+		    std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+		printf("sum: %u, using the first attempt took %llu microseconds\n",
+		       toplist_sum, diff.count());
 	}
 	/*
 	 * End of the first solution attempt
