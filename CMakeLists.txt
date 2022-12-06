@@ -20,6 +20,8 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 		day2
 		day3
 		day4
+		day5
+		day6
 	)
 
 	#* set up output directories
@@ -34,7 +36,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
 	add_compile_options(
 		-g #* debug symbols
-		-Og #* optimization
+		-O0 #* optimization
 		-fdiagnostics-color=always #* colored debug output
 		-fmessage-length=0 #* disable line wrapping (default=72 char) 
 		-Wall #* all warnings

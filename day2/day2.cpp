@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 				break;
 			}
 		}
-		printf("score b %d\n`", total_score);
+		printf("score b %d\n", total_score);
 		//* process
 	}
 	//* close the file

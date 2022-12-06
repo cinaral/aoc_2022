@@ -2,10 +2,8 @@
 
 ```std::sort``` is faster than the first solution attempt for large $n \approx \text{elf count}$ and does not scale with the choice of $n$. The first solution attempt is faster than ```std::sort``` for small $n \ll \text{elf count}$, because we do not need to sort the whole array. 
 
-In general, I suppose it is better to not write your own algorithms.
-
 ```
-$ scripts/benchmark.sh
+$ ./benchmark.sh
 ---------------------------
 1996 values, 253 elves, top 1
 ---------------------------
@@ -49,4 +47,4 @@ std::sort took 21 microseconds (246 total w/ printing)
 Sum: 11295745
 the first attempt took 84 microseconds (332 total w/ printing)
 ```
-[Try running the benchmark script.](scripts/benchmark.sh)
+[Try running the benchmark script.](benchmark.sh)
