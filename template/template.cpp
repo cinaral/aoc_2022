@@ -32,13 +32,12 @@ main(int argc, char *argv[])
 		//* iterate over groups...
 		const auto grp_start_idx = i_grp == 0 ? 0 : grp_end_idx[i_grp - 1];
 		std::vector<Val_T> vals_row;
-		printf("Group %zu: ", i_grp);
+		printf("Group %zu:\n", i_grp);
 
 		for (size_t j_row = grp_start_idx; j_row < grp_end_idx[i_grp]; ++j_row) {
 			//* iterate over lines in group...
 			const auto col_size = col_sizes[j_row];
 			char str[line_buf_size];
-			printf("\n");
 
 			for (size_t k_col = 0; k_col < col_size; ++k_col) {
 				//* iterate over characters in line...
@@ -50,12 +49,10 @@ main(int argc, char *argv[])
 			//* convert to val if needed
 			const Val_T val = strtoull(str, NULL, val_base); //* strtoull or similar
 			vals_row.push_back(val);
-			printf("%-32s [%zu]=%llu", str, j_row, val);
+			printf("%-32s [%zu]=%llu\n", str, j_row, val);
 		}
 		vals_by_groups.push_back(vals_row);
-		printf("\n");
 	}
-	printf("\n");
 
 	//* close the file
 	if (fclose(input_file) != 0) {
