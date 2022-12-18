@@ -3,6 +3,8 @@
 #* project relative path
 PROJECT_PATH=..
 BUILD_DIR=build/bin
+#EXECUTABLES="template day1 day2 day3 day4 day5 day6"
+EXECUTABLES="template day5"
 
 #*  change the cwd to the script dir temporarily, and hide pushd popd output
 pushd () { 
@@ -17,19 +19,17 @@ trap popd EXIT #*
 pushd $PROJECT_PATH
 trap popd EXIT #*
 
-printf "\nRun template.exe...\n"
-$BUILD_DIR/template.exe
+UNAME=$(uname)
 
-printf "\nRun day1.exe...\n"
-$BUILD_DIR/day1.exe
-
-printf "\nRun day2.exe...\n"
-$BUILD_DIR/day2.exe
-
-printf "\nRun day3.exe...\n"
-$BUILD_DIR/day3.exe
-
-printf "\nRun day4.exe...\n"
-$BUILD_DIR/day4.exe
+for exe in $EXECUTABLES
+do
+	if [[ $UNAME == "Linux" ]] ; then
+		printf "\n---> Running $exe...\n"
+		$BUILD_DIR/$exe
+	elif [[ $UNAME == "MSYS"* ]] ; then
+		printf "\n---> Running $exe.exe...\n"
+		$BUILD_DIR/$exe.exe
+	fi
+done
 
 echo "$0 done."

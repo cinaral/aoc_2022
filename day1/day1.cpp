@@ -1,3 +1,4 @@
+#include "read_file.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
@@ -12,7 +13,7 @@ using Val_T = unsigned;
 int
 main(int argc, char *argv[])
 {
-	//* open the file
+	//* open and read the file
 	printf("Usage: main [n] [input (Default: \"%s\")]\n", dflt_file);
 	size_t toplist_size = argc > 1 ? atoi(argv[1]) : dflt_toplist_size;
 	FILE *const input_file = fopen(argc > 2 ? argv[2] : dflt_file, "r");
@@ -22,35 +23,10 @@ main(int argc, char *argv[])
 	} else {
 		perror("Error opening file");
 	}
-
-	//* read the file
-	char line_buf[line_buf_size];
-	size_t line_counter = 0;
-	std::vector<std::vector<char>> line_arr;
-	std::vector<size_t> line_len_arr;
+	std::vector<std::vector<char>> rows;
+	std::vector<size_t> col_sizes;
 	std::vector<size_t> grp_end_idx;
-
-	while (fgets(line_buf, line_buf_size, input_file) != NULL) {
-		std::vector<char> lines;
-
-		for (size_t j = 0; j < line_buf_size; ++j) {
-			if (line_buf[j] == '\n' || line_buf[j] == '\0') {
-				if (j > 0) { //* if line_buf is not just endline/empty
-					++line_counter;
-					line_arr.push_back(lines);
-					line_len_arr.push_back(j);
-				} else {
-					grp_end_idx.push_back(line_counter);
-				}
-				break;
-			}
-			lines.push_back(line_buf[j]);
-		}
-	}
-	grp_end_idx.push_back(line_counter);
-	const size_t grup_count = grp_end_idx.size();
-	const size_t line_count = line_counter;
-	printf("Read %zu lines in %zu groups\n", line_count, grup_count);
+	read_file<line_buf_size>(input_file, rows, col_sizes, grp_end_idx);
 
 	//* parse the lines and groups
 	std::vector<std::vector<Val_T>> vals_in_grps;
@@ -63,13 +39,13 @@ main(int argc, char *argv[])
 
 		for (size_t j = grp_start_idx; j < grp_end_idx[i]; ++j) {
 			//* iterate over lines in group...
-			const size_t line_len = line_len_arr[j];
+			const size_t line_len = col_sizes[j];
 			char str[line_buf_size];
 			// printf("[%zu]", j);
 
 			for (size_t k = 0; k < line_len; ++k) {
 				//* iterate over characters in line...
-				str[k] = line_arr[j][k];
+				str[k] = rows[j][k];
 				// printf("%c", line_arr[j][k]);
 			}
 			str[line_len] = '\0';        //* null termination
@@ -151,8 +127,8 @@ main(int argc, char *argv[])
 		const auto end = std::chrono::high_resolution_clock::now();
 		const auto diff =
 		    std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-		printf("sum: %u, using the first attempt took %llu microseconds\n",
-		       toplist_sum, diff.count());
+		printf("sum: %u, using the first attempt took %llu microseconds\n", toplist_sum,
+		       diff.count());
 	}
 	/*
 	 * End of the first solution attempt
