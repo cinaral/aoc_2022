@@ -22,6 +22,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 		day4
 		day5
 		day6
+		day7
 	)
 
 	#* set up output directories

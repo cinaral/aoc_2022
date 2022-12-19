@@ -53,7 +53,6 @@ main(int argc, char *argv[])
 		}
 		vals_by_groups.push_back(vals_row);
 	}
-
 	//* close the file
 	if (fclose(input_file) != 0) {
 		perror("Error closing file");

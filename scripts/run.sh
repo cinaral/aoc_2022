@@ -3,8 +3,8 @@
 #* project relative path
 PROJECT_PATH=..
 BUILD_DIR=build/bin
-#EXECUTABLES="template day1 day2 day3 day4 day5 day6"
-EXECUTABLES="template day6"
+#EXECUTABLES="template day1 day2 day3 day4 day5 day6 day7"
+EXECUTABLES="day7"
 
 #*  change the cwd to the script dir temporarily, and hide pushd popd output
 pushd () { 
