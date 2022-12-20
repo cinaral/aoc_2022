@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#* project relative path
+#* project's relative path with respect to this script
 PROJECT_PATH=..
 BUILD_DIR=build/bin
 #EXECUTABLES="template day1 day2 day3 day4 day5 day6 day7"
@@ -16,6 +16,7 @@ popd () {
 pushd "$(dirname ${BASH_SOURCE:0})"
 trap popd EXIT #*
 
+#* cd into build directory
 pushd $PROJECT_PATH
 trap popd EXIT #*
 

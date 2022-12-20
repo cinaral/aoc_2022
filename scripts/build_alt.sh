@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#* project relative path
+#* project's relative path with respect to this script
 PROJECT_PATH=../..
 BUILD_DIR=$PROJECT_PATH
 
@@ -18,12 +18,10 @@ if ! [[ -d "$BUILD_DIR" ]]; then
 	mkdir $BUILD_DIR
 fi
 
+#* cd into build directory
 pushd $BUILD_DIR
+trap popd EXIT #*
 
 g++ -o day1/main.exe main.cpp
-
-trap popd EXIT 
-
-./main.exe 
 
 echo "$0 done."
